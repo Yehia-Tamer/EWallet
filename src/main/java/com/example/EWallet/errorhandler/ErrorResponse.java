@@ -7,18 +7,18 @@ import java.time.LocalDateTime;
 @Data
 public class ErrorResponse {
 
-    private LocalDateTime dateTime;
+    private final LocalDateTime dateTime;
 
-    private int status;
+    private final int status;
 
-    private String error;
+    private final String error;
 
-    private String message;
+    private final String message;
 
-    private String path;
+    private final String path;
 
-    public ErrorResponse(LocalDateTime dateTime,int status,String error,String message,String path) {
-        this.dateTime=dateTime;
+    public ErrorResponse(int status,String error,String message,String path) {
+        this.dateTime=LocalDateTime.now();
         this.status=status;
         this.error=error;
         this.message=message;

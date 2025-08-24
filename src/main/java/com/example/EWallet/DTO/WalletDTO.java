@@ -20,7 +20,7 @@ public class WalletDTO {
     @Min(0)
     private float balance;
 
-    @NotBlank
+    @NotNull
     private UUID walletID;
 
     @NotBlank
@@ -29,9 +29,9 @@ public class WalletDTO {
 
     private UserResponseDTO user;
 
-    private List<Transaction> recepientTransactions;
+    private List<TransactionsDTO> recipientTransactions;
 
-    private List<Transaction> senderTransactions;
+    private List<TransactionsDTO> senderTransactions;
 
     public WalletDTO(UUID walletID,String currency,float balance) {
         this.walletID=walletID;

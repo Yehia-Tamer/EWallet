@@ -23,9 +23,10 @@ public class Transaction {
     private Wallet senderWallet;
 
     @ManyToOne
-    @JoinColumn(name = "recepient_wallet_ID")
-    private Wallet recepientWallet;
+    @JoinColumn(name = "recipient_wallet_ID")
+    private Wallet recipientWallet;
 
+    @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
 }

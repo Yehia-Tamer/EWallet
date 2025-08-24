@@ -13,7 +13,7 @@ import java.util.UUID;
 public class Wallet {
     private float balance;
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID walletID;
 
     private String currency;
@@ -21,8 +21,8 @@ public class Wallet {
     @OneToOne(mappedBy = "wallet")
     private User user;
 
-    @OneToMany(mappedBy = "recepientWallet")
-    private List<Transaction> recepientTransactions;
+    @OneToMany(mappedBy = "recipientWallet")
+    private List<Transaction> recipientTransactions;
 
     @OneToMany(mappedBy = "senderWallet")
     private List<Transaction> senderTransactions;

@@ -3,6 +3,7 @@ package com.example.EWallet.service;
 import com.example.EWallet.entities.Wallet;
 import com.example.EWallet.DTO.WalletDTO;
 import com.example.EWallet.errorhandler.exceptions.WalletNotFoundException;
+import com.example.EWallet.repository.UserRepository;
 import com.example.EWallet.repository.WalletRepository;
 import org.springframework.stereotype.Service;
 

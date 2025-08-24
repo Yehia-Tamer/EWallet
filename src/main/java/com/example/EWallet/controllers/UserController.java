@@ -4,6 +4,7 @@ import com.example.EWallet.DTO.UserRegistrationDTO;
 import com.example.EWallet.DTO.UserResponseDTO;
 import com.example.EWallet.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,17 +18,17 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    public final UserService UserService;
+    public final UserService userService;
 
-    public UserController(UserService UserService)
+    public UserController(UserService userService)
     {
-        this.UserService=UserService;
+        this.userService=userService;
     }
 
     @PostMapping("/register")
 
     public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRegistrationDTO userDTO) {
-        return ResponseEntity.ok(UserService.RegisterUser(userDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserService.registerUser(userDTO));
     }
 
     @GetMapping("/{id}")

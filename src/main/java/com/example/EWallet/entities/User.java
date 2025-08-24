@@ -2,6 +2,7 @@ package com.example.EWallet.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -11,9 +12,27 @@ import java.util.UUID;
 @Table(name="USERS")
 public class User {
 
-    private String username, firstName, userType, lastName, password, email, telephoneNumber, gender;
+    @Column(unique = true)
+    private String username;
 
-    @Id @GeneratedValue
+    private String firstName;
+
+    private String userType;
+
+    private String lastName;
+
+    @Column(unique = true)
+    private String password;
+
+    @Column(unique = true)
+    private String email;
+
+    @Column(unique = true)
+    private String telephoneNumber;
+
+    private String gender;
+
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private int age;

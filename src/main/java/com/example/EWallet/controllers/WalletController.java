@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.example.EWallet.DTO.WalletDTO;
 import com.example.EWallet.service.WalletService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +19,9 @@ public class WalletController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<WalletDTO> createWallet(@RequestBody WalletDTO walletDTO) {
-        return ResponseEntity.ok(walletService.createWallet(walletDTO));
+    public ResponseEntity<WalletDTO> createWallet(@Valid @RequestBody WalletDTO walletDTO) {
+        WalletDTO saved = walletService.createWallet(walletDTO);
+        return ResponseEntity.ok(saved);
     }
 
     @GetMapping("/{id}/balance")

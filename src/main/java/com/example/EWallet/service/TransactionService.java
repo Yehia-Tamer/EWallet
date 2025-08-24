@@ -4,11 +4,10 @@ import com.example.EWallet.DTO.TransactionsDTO;
 import com.example.EWallet.entities.TransactionType;
 import com.example.EWallet.entities.Wallet;
 import com.example.EWallet.entities.Transaction;
-import com.example.EWallet.errorhandler.exceptions.InsufficientBalanceException;
-import com.example.EWallet.errorhandler.exceptions.TransactionNotFoundException;
-import com.example.EWallet.errorhandler.exceptions.WalletNotFoundException;
+import com.example.EWallet.errorhandler.exceptions.*;
 import com.example.EWallet.repository.TransactionsRepository;
 import com.example.EWallet.repository.WalletRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.time.LocalDateTime;
@@ -34,32 +33,36 @@ public class TransactionService {
         dto.setTransactionType(transaction.getTransactionType());
         dto.setTransactionDateAndTime(transaction.getTransactionDateAndTime());
         dto.setSenderWalletId(transaction.getSenderWallet() != null ? transaction.getSenderWallet().getWalletID() : null);
-        dto.setRecepientWalletId(transaction.getRecepientWallet() != null ? transaction.getRecepientWallet().getWalletID() : null);
+        dto.setRecipientWalletId(transaction.getRecipientWallet() != null ? transaction.getRecipientWallet().getWalletID() : null);
         return dto;
     }
 
+    @Transactional
     public TransactionsDTO transfer(TransactionsDTO dto) {
         Wallet sender = walletRepository.findById(dto.getSenderWalletId())
                 .orElseThrow(() -> new WalletNotFoundException(dto.getSenderWalletId()));
-        Wallet recepient = walletRepository.findById(dto.getRecepientWalletId())
-                .orElseThrow(() -> new WalletNotFoundException(dto.getRecepientWalletId()));
+        Wallet recipient = walletRepository.findById(dto.getRecipientWalletId())
+                .orElseThrow(() -> new WalletNotFoundException(dto.getRecipientWalletId()));
 
         if(dto.getAmount()<=0)
-            throw new IllegalArgumentException("Withdraw amount must be greater than zero!");
+            throw new InvalidTransactionAmountException(dto.getAmount());
 
         if(dto.getAmount()> sender.getBalance())
             throw new InsufficientBalanceException(sender.getWalletID(), sender.getBalance(),dto.getAmount());
 
+        if(sender.getWalletID().equals(recipient.getWalletID()))
+            throw new InvalidTransactionException(sender.getWalletID());
+
         sender.setBalance(sender.getBalance() - dto.getAmount());
-        recepient.setBalance(recepient.getBalance() + dto.getAmount());
+        recipient.setBalance(recipient.getBalance() + dto.getAmount());
 
         walletRepository.save(sender);
-        walletRepository.save(recepient);
+        walletRepository.save(recipient);
 
         Transaction transaction = new Transaction();
         transaction.setAmount(dto.getAmount());
         transaction.setSenderWallet(sender);
-        transaction.setRecepientWallet(recepient);
+        transaction.setRecipientWallet(recipient);
         transaction.setTransactionType(TransactionType.TRANSFER);
         transaction.setTransactionDateAndTime(LocalDateTime.now());
         transactionsRepository.save(transaction);
@@ -67,12 +70,13 @@ public class TransactionService {
         return mapToDTO(transaction);
     }
 
+    @Transactional
     public TransactionsDTO withdraw(TransactionsDTO dto) {
         Wallet wallet = walletRepository.findById(dto.getSenderWalletId())
                 .orElseThrow(() -> new WalletNotFoundException(dto.getSenderWalletId()));
 
         if(dto.getAmount()<=0)
-            throw new IllegalArgumentException("Withdraw amount must be greater than zero!");
+            throw new InvalidTransactionAmountException(dto.getAmount());
 
         if(dto.getAmount()> wallet.getBalance())
             throw new InsufficientBalanceException(wallet.getWalletID(), wallet.getBalance(), dto.getAmount());
@@ -83,7 +87,7 @@ public class TransactionService {
         Transaction transaction = new Transaction();
         transaction.setAmount(dto.getAmount());
         transaction.setSenderWallet(wallet);
-        transaction.setRecepientWallet(null);
+        transaction.setRecipientWallet(null);
         transaction.setTransactionType(TransactionType.WITHDRAW);
         transaction.setTransactionDateAndTime(LocalDateTime.now());
 
@@ -91,12 +95,13 @@ public class TransactionService {
         return mapToDTO(transaction);
     }
 
+    @Transactional
     public TransactionsDTO deposit(TransactionsDTO dto) {
-        Wallet wallet = walletRepository.findById(dto.getRecepientWalletId())
-                .orElseThrow(() -> new WalletNotFoundException(dto.getRecepientWalletId()));
+        Wallet wallet = walletRepository.findById(dto.getRecipientWalletId())
+                .orElseThrow(() -> new WalletNotFoundException(dto.getRecipientWalletId()));
 
         if(dto.getAmount()<=0)
-            throw new IllegalArgumentException("Deposit amount must be greater than zero!");
+            throw new InvalidTransactionAmountException(dto.getAmount());
 
         wallet.setBalance(wallet.getBalance() + dto.getAmount());
         walletRepository.save(wallet);
@@ -104,7 +109,7 @@ public class TransactionService {
         Transaction transaction = new Transaction();
         transaction.setAmount(dto.getAmount());
         transaction.setSenderWallet(null);
-        transaction.setRecepientWallet(wallet);
+        transaction.setRecipientWallet(wallet);
         transaction.setTransactionType(TransactionType.DEPOSIT);
         transaction.setTransactionDateAndTime(LocalDateTime.now());
 
@@ -120,7 +125,7 @@ public class TransactionService {
 
     public List<TransactionsDTO> getTransactionsByUser(UUID userId) {
         List<Transaction> sent = transactionsRepository.findAllBySenderWallet_User_Id(userId);
-        List<Transaction> received = transactionsRepository.findAllByRecepientWallet_User_Id(userId);
+        List<Transaction> received = transactionsRepository.findAllByRecipientWallet_User_Id(userId);
         return Stream.concat(sent.stream(),received.stream())
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());

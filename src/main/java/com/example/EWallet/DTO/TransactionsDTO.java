@@ -28,9 +28,9 @@ public class TransactionsDTO {
     @NotNull
     private TransactionType transactionType;
 
-    @NotBlank
+    @NotNull
     private UUID senderWalletId;
 
-    @NotBlank
-    private UUID recepientWalletId;
+    @NotNull
+    private UUID recipientWalletId;
 }

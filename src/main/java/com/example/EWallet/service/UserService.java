@@ -22,7 +22,7 @@ public class UserService {
         this.userRepository=userRepository;
     }
 
-    public UserResponseDTO RegisterUser(UserRegistrationDTO dto) {
+    public UserResponseDTO registerUser(UserRegistrationDTO dto) {
         User user=new User();
         user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstname());
@@ -39,12 +39,13 @@ public class UserService {
         Optional<User> user= Optional.ofNullable(userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id)));
 
-        return new UserResponseDTO( user.get().getId(),
-                                    user.get().getUsername(),
-                                    user.get().getEmail(),
-                                    user.get().getFirstName(),
-                                    user.get().getLastName()
-                                  );
+        return new UserResponseDTO(
+                user.get().getId(),
+                user.get().getUsername(),
+                user.get().getEmail(),
+                user.get().getFirstName(),
+                user.get().getLastName()
+        );
     }
 
     public List<UserResponseDTO> getAllUsers() {

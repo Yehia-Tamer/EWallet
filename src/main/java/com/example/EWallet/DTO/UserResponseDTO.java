@@ -9,11 +9,21 @@ import java.util.UUID;
 
 @Data
 public class UserResponseDTO {
-    @NotNull private UUID id;
-    @NotBlank private String username;
-    @Email @NotBlank private String email;
-    @NotBlank private String firstname;
-    @NotBlank private String lastname;
+    @NotNull
+    private UUID id;
+
+    @NotBlank
+    private String username;
+
+    @Email @NotBlank
+    private String email;
+
+    @NotBlank
+    private String firstname;
+
+    @NotBlank
+    private String lastname;
+
     private WalletDTO wallet;
 
     public UserResponseDTO(UUID id,String username,String email,String firstname,String lastname) {

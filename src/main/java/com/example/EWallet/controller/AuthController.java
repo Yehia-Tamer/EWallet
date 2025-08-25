@@ -1,4 +1,4 @@
-package com.example.EWallet.controllers;
+package com.example.EWallet.controller;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,7 +14,7 @@ public class AuthController {
         return "Hello Admin!";
     }
 
-    @GetMapping("/user")
+    @GetMapping("/auth/user")
     @Secured("ROLE_USER")
     public String userOnly() {
         return "Hello User!";

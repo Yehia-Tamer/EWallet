@@ -1,4 +1,4 @@
-package com.example.EWallet.controllers;
+package com.example.EWallet.controller;
 
 import com.example.EWallet.DTO.UserRegistrationDTO;
 import com.example.EWallet.DTO.UserResponseDTO;
@@ -28,16 +28,16 @@ public class UserController {
     @PostMapping("/register")
 
     public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRegistrationDTO userDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(UserService.registerUser(userDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(userDTO));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> getUser(@PathVariable UUID id) {
-        return ResponseEntity.ok(UserService.getUserById(id));
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        return ResponseEntity.ok(UserService.getAllUsers());
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 }

@@ -1,4 +1,4 @@
-package com.example.EWallet.controllers;
+package com.example.EWallet.controller;
 
 import java.lang.*;
 import java.util.UUID;

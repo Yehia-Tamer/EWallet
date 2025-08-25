@@ -1,4 +1,4 @@
-package com.example.EWallet.controllers;
+package com.example.EWallet.controller;
 
 import com.example.EWallet.DTO.TransactionsDTO;
 import com.example.EWallet.service.TransactionService;
